@@ -29,6 +29,7 @@ dockers:
     image_templates:
       - "martinnirtl/dynatrace-kube-hunter-ingester:latest"
       - "martinnirtl/dynatrace-kube-hunter-ingester:{{ .Tag }}"
+    use: buildx
 changelog:
   sort: asc
   filters:
