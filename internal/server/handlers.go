@@ -20,6 +20,8 @@ func report(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err.Error())
 	}
 
+	log.Printf("BODY:\n%s", string(body))
+
 	report, err := kubehunter.ParseReport(body)
 	if err != nil {
 		log.Printf("BODY:\n%s", string(body))
