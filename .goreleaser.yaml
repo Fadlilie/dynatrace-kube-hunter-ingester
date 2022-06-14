@@ -4,7 +4,7 @@ before:
     - go mod tidy
 builds:
   - id: app
-    binary: foo/app
+    binary: app
     env:
       - CGO_ENABLED=0
     goos:
@@ -25,7 +25,8 @@ checksum:
 snapshot:
   name_template: "{{ incpatch .Version }}-next"
 dockers:
-  - goos: linux
+  - id: app
+    goos: linux
     image_templates:
       - "martinnirtl/dynatrace-kube-hunter-ingester:latest"
       - "martinnirtl/dynatrace-kube-hunter-ingester:{{ .Tag }}"
