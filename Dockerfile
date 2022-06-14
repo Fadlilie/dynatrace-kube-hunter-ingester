@@ -1,5 +1,7 @@
-FROM scratch
+FROM alpine as alpine
+RUN apk add -U --no-cache ca-certificates
 
+FROM scratch
 COPY ./app /
-COPY ./build/root-ca.cert /etc/ssl/certs/
+COPY --from=alpine /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 ENTRYPOINT ["/app"]
