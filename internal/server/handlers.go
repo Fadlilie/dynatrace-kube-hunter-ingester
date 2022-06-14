@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/martinnirtl/dynatrace-kube-hunter-ingester/internal/dynatrace"
 	"github.com/martinnirtl/dynatrace-kube-hunter-ingester/pkg/kubehunter"
@@ -20,9 +21,10 @@ func report(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err.Error())
 	}
 
-	log.Printf("BODY:\n%s", string(body))
+	// unquote is necessary as JSON received from kube-hunter is not clean
+	unqotedBodyString, _ := strconv.Unquote(string(body))
 
-	report, err := kubehunter.ParseReport(body)
+	report, err := kubehunter.ParseReport([]byte(unqotedBodyString))
 	if err != nil {
 		log.Printf("BODY:\n%s", string(body))
 
