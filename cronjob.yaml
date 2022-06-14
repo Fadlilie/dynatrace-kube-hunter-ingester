@@ -1,0 +1,41 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: kube-hunter
+spec:
+  schedule: "0 0 * * *"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: kube-hunter
+        spec:
+          containers:
+            - name: kube-hunter
+              image: aquasec/kube-hunter:0.6.8
+              command:
+                - kube-hunter
+              env:
+                - name: KUBEHUNTER_HTTP_DISPATCH_URL
+                  value: http://localhost:8080/report
+              args:
+                - --pod
+                - --quick
+                - --report=json
+                - --dispatch=http
+            - name: dynatrace-ingester
+              image: martinnirtl/dynatrace-kube-hunter-ingester:1.0.0
+              args:
+                # - --port=8080
+                - --api-url=https://xxxxxxxx.live.dynatrace.com
+                - --token=$DT_TOKEN
+                - --cluster-name=<cluster-name>
+                # - --ingest-as=logs
+                # - --prefix=[Kube Hunter]
+                # - --dry-run
+              envFrom:
+                - name: DT_TOKEN
+                  secretRef:
+                    name: dynatrace-token
+          restartPolicy: Never
