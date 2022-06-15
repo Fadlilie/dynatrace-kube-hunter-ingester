@@ -1,3 +1,12 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dynatrace-kube-hunter-ingester
+data:
+  DT_TOKEN: bmljZSB0cnkgbmljZSB0cnkgbmljZSB0cnkgbmljZSB0cnkgbmljZSB0cnkgbmljZSB0cnkgbmljZSB0cnkgbmljZSB0cnkgbmljZSB0cnkgbmljZSB0cnkgbmljZSB0cnkgbmljZSB0cnkgbmljZSB0cnkgCg==
+
+---
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -18,21 +27,21 @@ spec:
               value: http://localhost:8080/report
           args:
             - --pod
-            - --quick
+            - --quick # recommended for AWS and Azure
             - --report=json
             - --dispatch=http
         - name: dynatrace-ingester
-          image: martinnirtl/dynatrace-kube-hunter-ingester:1.0.0
+          image: martinnirtl/dynatrace-kube-hunter-ingester:latest
+          imagePullPolicy: Always
           args:
             # - --port=8080
-            - --api-url=https://xxxxxxxx.live.dynatrace.com
-            - --token=$DT_TOKEN
+            - --api-url=https://xxxxxxxx.live.dynatrace.com/api
+            - --token=$(DT_TOKEN)
             - --cluster-name=<cluster-name>
             # - --ingest-as=logs
             # - --prefix=[Kube Hunter]
             # - --dry-run
           envFrom:
-            - name: DT_TOKEN
-              secretRef:
-                name: dynatrace-token
+            - secretRef:
+                name: dynatrace-kube-hunter-ingester
       restartPolicy: Never
