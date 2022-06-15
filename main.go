@@ -21,7 +21,9 @@ THE SOFTWARE.
 */
 package main
 
-import "github.com/martinnirtl/dynatrace-kube-hunter-ingester/cmd"
+import (
+	"github.com/martinnirtl/dynatrace-kube-hunter-ingester/cmd"
+)
 
 func main() {
 	cmd.Execute()
