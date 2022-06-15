@@ -29,7 +29,7 @@ dockers:
     goos: linux
     image_templates:
       - "martinnirtl/dynatrace-kube-hunter-ingester:latest"
-      - "martinnirtl/dynatrace-kube-hunter-ingester:{{ .Tag }}"
+      - "martinnirtl/dynatrace-kube-hunter-ingester:{{ .Version }}"
     use: buildx
 changelog:
   sort: asc
