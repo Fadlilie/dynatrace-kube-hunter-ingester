@@ -22,11 +22,13 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"log"
 	"os"
 
 	"github.com/martinnirtl/dynatrace-kube-hunter-ingester/internal/server"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"go.uber.org/zap"
 )
 
 var rootCmd = &cobra.Command{
@@ -46,8 +48,29 @@ func Execute() {
 	}
 }
 
+func initLogger() {
+	var logger *zap.Logger
+	var err error
+	if viper.GetBool("development") {
+		logger, err = zap.NewDevelopment()
+	} else {
+		logger, err = zap.NewProduction()
+	}
+
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+
+	zap.ReplaceGlobals(logger)
+}
+
 func init() {
-	rootCmd.Flags().UintP("port", "p", 8080, "Listening port")
+	cobra.OnInitialize(initLogger)
+
+	rootCmd.PersistentFlags().Bool("development", false, "Enable development mode")
+	rootCmd.PersistentFlags().MarkHidden("development")
+
+	rootCmd.Flags().StringP("port", "p", "8080", "Listening port")
 	rootCmd.Flags().String("api-url", "", "Dynatrace API URL e.g. https://xxxxxxxx.live.dynatrace.com/api")
 	rootCmd.Flags().String("token", "", "Dynatrace API token with event ingest permission assigned")
 	rootCmd.Flags().String("cluster-name", "", "Set cluster name (same as in Dynatrace)")
@@ -57,5 +80,6 @@ func init() {
 	rootCmd.Flags().Bool("dry-run", false, "Run a dry-run and get events/logs printed only")
 	// rootCmd.Flags().Bool("add-k8s", false, "Add Kubernetes entity information to properties of events/logs")
 
+	viper.BindPFlags(rootCmd.PersistentFlags())
 	viper.BindPFlags(rootCmd.Flags())
 }

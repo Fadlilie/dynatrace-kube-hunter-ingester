@@ -5,13 +5,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strings"
 	"sync"
 
 	"github.com/martinnirtl/dynatrace-kube-hunter-ingester/pkg/kubehunter"
 	"github.com/spf13/viper"
+	"go.uber.org/zap"
 )
 
 type Event struct {
@@ -57,6 +57,8 @@ func createEventsV2FromKubeHunterReport(report *kubehunter.Report) []*Event {
 }
 
 func ingestEventV2(url string, token string, event *Event) {
+	sugar := zap.L().Sugar()
+
 	json, _ := json.Marshal(event)
 	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(json))
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
@@ -67,24 +69,28 @@ func ingestEventV2(url string, token string, event *Event) {
 	if err != nil {
 		// TODO think through
 		// TODO add counter metrics for failed and ingested events
-		log.Printf("Failed to ingest event: %s", err.Error())
+		sugar.Error("Failed to ingest event: ", err.Error())
 	}
 
 	body, _ := ioutil.ReadAll(res.Body)
 
-	// TODO replace log with zerolog, logrus or zap
-	log.Println("Response status: ", res.Status)
-	log.Println("Response body: ", string(body))
+	sugar.Debug("Response status: ", res.Status)
+	sugar.Debug("Response body: ", string(body))
 }
 
 func IngestReportAsEventsV2(apiBaseUrl string, token string, report *kubehunter.Report) {
+	sugar := zap.L().Sugar()
+
 	events := createEventsV2FromKubeHunterReport(report)
 
-	log.Printf("Created %d events", len(events))
+	sugar.Infof("Created %d events", len(events))
 
 	if viper.GetBool("dry-run") {
 		json, _ := json.MarshalIndent(events, "  ", "  ")
-		log.Printf("EVENTS:\n%s", string(json))
+		sugar.Infow("EVENTS:",
+			"", string(json),
+		)
+
 		return
 	}
 

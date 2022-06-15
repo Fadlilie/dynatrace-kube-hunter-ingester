@@ -4,11 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/martinnirtl/dynatrace-kube-hunter-ingester/pkg/kubehunter"
 	"github.com/spf13/viper"
+	"go.uber.org/zap"
 )
 
 type Log struct {
@@ -75,6 +75,8 @@ func createLogsFromKubeHunterReport(report *kubehunter.Report) []*Log {
 }
 
 func ingestLogs(url string, token string, logs []*Log) {
+	sugar := zap.L().Sugar()
+
 	json, _ := json.Marshal(logs)
 	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(json))
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
@@ -85,24 +87,28 @@ func ingestLogs(url string, token string, logs []*Log) {
 	if err != nil {
 		// TODO think through
 		// TODO add counter metrics for failed and ingested events
-		log.Printf("Failed to ingest logs: %s", err.Error())
+		sugar.Error("Failed to ingest logs: ", err.Error())
 	}
 
-	// TODO replace log with zerolog, logrus or zap
-	log.Println("Response status: ", res.Status)
+	sugar.Debug("Response status: ", res.Status)
 }
 
 func IngestReportAsLogs(apiBaseUrl string, token string, report *kubehunter.Report) {
+	sugar := zap.L().Sugar()
+
 	logs := createLogsFromKubeHunterReport(report)
 
-	log.Printf("Created %d logs", len(logs))
+	sugar.Infof("Created %d logs", len(logs))
 	json, err := json.MarshalIndent(logs, "  ", "  ")
 	if err != nil {
-		log.Printf("Failed to marshal logs: %s", err.Error())
+		sugar.Error("Failed to marshal logs: ", err.Error())
 	}
 
 	if viper.GetBool("dry-run") {
-		log.Printf("LOGS: \n%s", string(json))
+		sugar.Infow("LOGS",
+			"logs", string(json),
+		)
+
 		return
 	}
 

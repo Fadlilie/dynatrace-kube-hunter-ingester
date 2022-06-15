@@ -2,8 +2,6 @@ package server
 
 import (
 	"context"
-	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -11,6 +9,7 @@ import (
 	"time"
 
 	"github.com/spf13/viper"
+	"go.uber.org/zap"
 )
 
 var (
@@ -19,11 +18,19 @@ var (
 )
 
 func StartServer() error {
+	sugar := zap.L().Sugar()
+
 	http.HandleFunc("/report", report)
 
-	port := viper.GetUint("port")
+	port := ":" + viper.GetString("port")
+	var addr string
+	if viper.GetBool("development") {
+		addr = "localhost" + port
+	} else {
+		addr = port
+	}
 	server = http.Server{
-		Addr: fmt.Sprintf(":%d", port),
+		Addr: addr,
 	}
 
 	done = make(chan os.Signal, 1)
@@ -31,12 +38,12 @@ func StartServer() error {
 
 	go func() {
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("Listen: %s\n", err)
+			sugar.Fatalf("Listen: %s\n", err)
 		}
 
-		log.Println("Server stopped listening")
+		sugar.Info("Server stopped listening")
 	}()
-	log.Printf("Server listening on port %d", port)
+	sugar.Info("Server listening on " + addr)
 
 	<-done
 	return shutdown()
@@ -47,17 +54,19 @@ func StopServer() {
 }
 
 func shutdown() error {
+	sugar := zap.L().Sugar()
+
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 	defer func() {
 		cancel()
 	}()
 
 	if err := server.Shutdown(ctx); err != nil {
-		log.Fatalf("Server shutdown failed: %+v", err)
+		sugar.Fatalf("Server shutdown failed: %+v", err)
 
 		return err
 	}
 
-	log.Print("Server exited nicely")
+	sugar.Info("Server exited nicely")
 	return nil
 }

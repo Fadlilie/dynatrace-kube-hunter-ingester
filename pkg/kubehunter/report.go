@@ -3,16 +3,13 @@ package kubehunter
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 )
 
 func ParseReport(data []byte) (*Report, error) {
 	report := &Report{}
 	err := json.Unmarshal(data, report)
 	if err != nil {
-		log.Fatalln(err.Error())
-
-		return nil, fmt.Errorf("")
+		return nil, fmt.Errorf("failed to parse report: %s", err.Error())
 	}
 
 	return report, nil
