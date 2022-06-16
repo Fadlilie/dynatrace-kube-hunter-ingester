@@ -70,7 +70,7 @@ func init() {
 	rootCmd.PersistentFlags().Bool("dev-mode", false, "Enable development mode")
 	rootCmd.PersistentFlags().MarkHidden("dev-mode")
 
-	rootCmd.Flags().StringP("port", "p", "8080", "Listening port")
+	rootCmd.Flags().Uint16P("port", "p", 8080, "Listening port")
 	rootCmd.Flags().String("api-url", "", "Dynatrace API URL e.g. https://xxxxxxxx.live.dynatrace.com/api")
 	rootCmd.Flags().String("token", "", "Dynatrace API token with event ingest permission assigned")
 	rootCmd.Flags().String("cluster-name", "", "Set cluster name (same as in Dynatrace)")
