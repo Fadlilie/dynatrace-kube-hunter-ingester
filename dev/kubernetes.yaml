@@ -17,16 +17,6 @@ spec:
       - name: dynatrace-kube-hunter-ingester
         image: martinnirtl/dynatrace-kube-hunter-ingester
         imagePullPolicy: Always
-        args:
-          - --dev-mode
-          - --port=8080
-          # - --api-url=https://xxxxxxxx.live.dynatrace.com/api
-          # - --token=$(DT_TOKEN)
-          # - --cluster-name=<cluster-name>
-          - --ingest-as=both
-          - --prefix=[Kube Hunter]
-          - --dry-run
-          - --no-exit
         ports:
         - containerPort: 8080
         resources: {}
