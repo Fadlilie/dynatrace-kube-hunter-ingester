@@ -79,6 +79,7 @@ func init() {
 	// rootCmd.Flags().String("alert-from-severity", "", "Create events that trigger a custom alert (default: high)")
 	rootCmd.Flags().Bool("dry-run", false, "Run a dry-run and get events/logs printed only")
 	// rootCmd.Flags().Bool("add-k8s", false, "Add Kubernetes entity information to properties of events/logs")
+	rootCmd.Flags().Bool("no-exit", false, "Keep server running")
 
 	viper.BindPFlags(rootCmd.PersistentFlags())
 	viper.BindPFlags(rootCmd.Flags())

@@ -14,9 +14,11 @@ import (
 func report(w http.ResponseWriter, r *http.Request) {
 	sugar := zap.L().Sugar()
 
-	defer func() {
-		StopServer()
-	}()
+	if viper.Get("no-exit") == false {
+		defer func() {
+			StopServer()
+		}()
+	}
 
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -38,10 +40,17 @@ func report(w http.ResponseWriter, r *http.Request) {
 	token := viper.GetString("token")
 
 	// TODO run in goroutines
-	if viper.GetString("ingest-as") == "events" || viper.GetString("ingest-as") == "both" {
+	switch viper.GetString("ingest-as") {
+	case "both":
 		dynatrace.IngestReportAsEventsV2(apiBaseUrl, token, report)
-	}
-	if viper.GetString("ingest-as") == "logs" || viper.GetString("ingest-as") == "both" {
+		dynatrace.IngestReportAsLogs(apiBaseUrl, token, report)
+	case "events":
+		dynatrace.IngestReportAsEventsV2(apiBaseUrl, token, report)
+	case "logs":
+		dynatrace.IngestReportAsLogs(apiBaseUrl, token, report)
+	default:
+		sugar.Warnf("Invalid argument '%s' for --ingest-as, fallback is 'logs'")
 		dynatrace.IngestReportAsLogs(apiBaseUrl, token, report)
 	}
+
 }
