@@ -17,7 +17,7 @@ var (
 	done   chan os.Signal
 )
 
-func StartServer() error {
+func StartServer() {
 	sugar := zap.L().Sugar()
 
 	http.HandleFunc("/report", report)
@@ -46,14 +46,15 @@ func StartServer() error {
 	sugar.Info("Server listening on " + addr)
 
 	<-done
-	return shutdown()
+
+	shutdown()
 }
 
 func StopServer() {
 	close(done)
 }
 
-func shutdown() error {
+func shutdown() {
 	sugar := zap.L().Sugar()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
@@ -63,10 +64,7 @@ func shutdown() error {
 
 	if err := server.Shutdown(ctx); err != nil {
 		sugar.Fatalf("Server shutdown failed: %+v", err)
-
-		return err
 	}
 
 	sugar.Info("Server exited nicely")
-	return nil
 }
