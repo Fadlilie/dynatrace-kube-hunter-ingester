@@ -51,7 +51,7 @@ func Execute() {
 func initLogger() {
 	var logger *zap.Logger
 	var err error
-	if viper.GetBool("development") {
+	if viper.GetBool("dev-mode") {
 		logger, err = zap.NewDevelopment()
 	} else {
 		logger, err = zap.NewProduction()
@@ -67,8 +67,8 @@ func initLogger() {
 func init() {
 	cobra.OnInitialize(initLogger)
 
-	rootCmd.PersistentFlags().Bool("development", false, "Enable development mode")
-	rootCmd.PersistentFlags().MarkHidden("development")
+	rootCmd.PersistentFlags().Bool("dev-mode", false, "Enable development mode")
+	rootCmd.PersistentFlags().MarkHidden("dev-mode")
 
 	rootCmd.Flags().StringP("port", "p", "8080", "Listening port")
 	rootCmd.Flags().String("api-url", "", "Dynatrace API URL e.g. https://xxxxxxxx.live.dynatrace.com/api")

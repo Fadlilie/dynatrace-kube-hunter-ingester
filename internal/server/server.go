@@ -24,7 +24,7 @@ func StartServer() error {
 
 	port := ":" + viper.GetString("port")
 	var addr string
-	if viper.GetBool("development") {
+	if viper.GetBool("dev-mode") {
 		addr = "localhost" + port
 	} else {
 		addr = port
