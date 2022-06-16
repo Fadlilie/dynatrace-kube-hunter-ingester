@@ -15,6 +15,12 @@ local_resource(
   deps=['./main.go', './cmd', './internal', './pkg'],
 )
 
+local_resource(
+  'post-report',
+  'curl --data "$(cat dev/sample-report.txt)" http://localhost:8080/report',
+  trigger_mode=TRIGGER_MODE_MANUAL,
+)
+
 docker_build_with_restart(
   'martinnirtl/dynatrace-kube-hunter-ingester',
   '.',
@@ -34,5 +40,5 @@ k8s_yaml('dev/kubernetes.yaml')
 k8s_resource(
   workload='dynatrace-kube-hunter-ingester', 
   port_forwards=8080,
-  resource_deps=['app-compile']
+  resource_deps=['app-compile'],
 )
