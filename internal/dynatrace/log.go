@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/martinnirtl/dynatrace-kube-hunter-ingester/pkg/kubehunter"
@@ -85,27 +86,33 @@ func ingestLogs(url string, token string, logs []*Log) {
 	client := &http.Client{}
 	res, err := client.Do(req)
 	if err != nil {
-		// TODO think through
 		// TODO add counter metrics for failed and ingested events
 		sugar.Error("Failed to ingest logs: ", err.Error())
 	}
 
 	sugar.Debug("Response status: ", res.Status)
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		sugar.Debug("Failed to read body: ", err.Error())
+	}
+	sugar.Debug("Response body: ", string(body))
 }
 
 func IngestReportAsLogs(apiBaseUrl string, token string, report *kubehunter.Report) {
 	sugar := zap.L().Sugar()
 
 	logs := createLogsFromKubeHunterReport(report)
-
-	sugar.Infof("Created %d logs", len(logs))
-	json, err := json.MarshalIndent(logs, "  ", "  ")
-	if err != nil {
-		sugar.Error("Failed to marshal logs: ", err.Error())
-	}
+	sugar.Infof("Processing %d logs", len(logs))
 
 	if viper.GetBool("dry-run") {
-		sugar.Infow("LOGS",
+		json, err := json.MarshalIndent(logs, "  ", "  ")
+		if err != nil {
+			sugar.Error("Failed to marshal logs: ", err.Error())
+
+			return
+		}
+
+		sugar.Infow("Dry run output for logs",
 			"logs", string(json),
 		)
 

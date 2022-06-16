@@ -67,14 +67,15 @@ func ingestEventV2(url string, token string, event *Event) {
 	client := &http.Client{}
 	res, err := client.Do(req)
 	if err != nil {
-		// TODO think through
 		// TODO add counter metrics for failed and ingested events
 		sugar.Error("Failed to ingest event: ", err.Error())
 	}
 
-	body, _ := ioutil.ReadAll(res.Body)
-
 	sugar.Debug("Response status: ", res.Status)
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		sugar.Debug("Failed to read body: ", err.Error())
+	}
 	sugar.Debug("Response body: ", string(body))
 }
 
@@ -83,11 +84,17 @@ func IngestReportAsEventsV2(apiBaseUrl string, token string, report *kubehunter.
 
 	events := createEventsV2FromKubeHunterReport(report)
 
-	sugar.Infof("Created %d events", len(events))
+	sugar.Infof("Processing %d events", len(events))
 
 	if viper.GetBool("dry-run") {
-		json, _ := json.MarshalIndent(events, "  ", "  ")
-		sugar.Infow("EVENTS:",
+		json, err := json.MarshalIndent(events, "  ", "  ")
+		if err != nil {
+			sugar.Error("Failed to marshal events: ", err.Error())
+
+			return
+		}
+
+		sugar.Infow("Dry run output for events",
 			"", string(json),
 		)
 
