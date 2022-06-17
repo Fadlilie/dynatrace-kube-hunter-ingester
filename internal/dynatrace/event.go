@@ -37,8 +37,7 @@ func createEventsV2FromKubeHunterReport(report *kubehunter.Report) []*Event {
 	entitySelector := GetEntitySelector(viper.GetString("cluster-name"))
 	events := make([]*Event, 0, 20)
 
-	// alertFromSeverity := viper.GetString("alert-from-severity")
-
+	// TODO alertFromSeverity := viper.GetString("alert-from-severity")
 	for _, v := range report.Vulnerabilities {
 		eventType := "CUSTOM_INFO"
 		if strings.ToLower(v.Severity) == "high" {

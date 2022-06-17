@@ -25,7 +25,6 @@ import (
 	"log"
 	"os"
 
-	"github.com/martinnirtl/dynatrace-kube-hunter-ingester/internal/server"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
@@ -33,12 +32,9 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:   "dynatrace-kube-hunter-ingester",
-	Short: "Send kube-hunter reports received over http to Dynatrace",
-	Long: `Send a kube-hunter report received over http to Dynatrace. 
-After parsing the kube-hunter report and transforming it to a Dynatrace Event v2, the event will be ingested via Dynatrace API.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		server.StartServer()
-	},
+	Short: "Send kube-hunter reports to Dynatrace",
+	Long:  `Send kube-hunter reports to Dynatrace. For more information visit https://github.com/martinnirtl/dynatrace-kube-hunter-ingester.`,
+	// Run: func(cmd *cobra.Command, args []string) {},
 }
 
 func Execute() {
@@ -70,17 +66,5 @@ func init() {
 	rootCmd.PersistentFlags().Bool("dev-mode", false, "Enable development mode")
 	rootCmd.PersistentFlags().MarkHidden("dev-mode")
 
-	rootCmd.Flags().Uint16P("port", "p", 8080, "Listening port")
-	rootCmd.Flags().String("api-url", "", "Dynatrace API URL e.g. https://xxxxxxxx.live.dynatrace.com/api")
-	rootCmd.Flags().String("token", "", "Dynatrace API token with event ingest permission assigned")
-	rootCmd.Flags().String("cluster-name", "", "Set cluster name (same as in Dynatrace)")
-	rootCmd.Flags().String("prefix", "[Kube Hunter]", "Prefix for ingested events/logs (default: [Kube Hunter])")
-	rootCmd.Flags().String("ingest-as", "logs", "Ingest report as events, logs or both (default: logs)")
-	// rootCmd.Flags().String("alert-from-severity", "", "Create events that trigger a custom alert (default: high)")
-	rootCmd.Flags().Bool("dry-run", false, "Run a dry-run and get events/logs printed only")
-	// rootCmd.Flags().Bool("add-k8s", false, "Add Kubernetes entity information to properties of events/logs")
-	rootCmd.Flags().Bool("no-exit", false, "Keep server running")
-
 	viper.BindPFlags(rootCmd.PersistentFlags())
-	viper.BindPFlags(rootCmd.Flags())
 }

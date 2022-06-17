@@ -33,7 +33,7 @@ docker_build_with_restart(
   'martinnirtl/dynatrace-kube-hunter-ingester',
   '.',
   entrypoint=['/app'],
-  container_args=["--dev-mode", "--ingest-as=both", "--dry-run", "--no-exit"],
+  container_args=["run", "--dev-mode", "--ingest=metrics,logs", "--dry-run", "--no-exit"],
   dockerfile='./dev/Dockerfile',
   only=['./build'],
   live_update=[

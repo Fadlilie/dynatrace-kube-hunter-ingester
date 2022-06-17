@@ -1,9 +1,11 @@
 package server
 
 import (
+	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"strconv"
+	"strings"
 	"sync"
 
 	"github.com/martinnirtl/dynatrace-kube-hunter-ingester/internal/dynatrace"
@@ -42,32 +44,40 @@ func processReport(body []byte, noExit bool) {
 		return
 	}
 
+	if viper.GetBool("dev-mode") {
+		if json, err := json.MarshalIndent(report.Vulnerabilities, "", " "); err == nil {
+			sugar.Debugw("Here goes the parsed report",
+				"vulnerabilities", string(json),
+			)
+		}
+	}
+
 	apiBaseUrl := viper.GetString("api-url")
 	token := viper.GetString("token")
 
-	switch viper.GetString("ingest-as") {
-	case "both":
-		var wg sync.WaitGroup
-		wg.Add(2)
+	var wg sync.WaitGroup
+	ingestOptions := strings.ReplaceAll(viper.GetString("ingest"), " ", "")
+	for _, ingest := range strings.Split(ingestOptions, ",") {
+		switch ingest {
+		case "logs":
+			wg.Add(1)
+			go func() {
+				dynatrace.IngestReportAsLogs(apiBaseUrl, token, report)
+				wg.Done()
+			}()
 
-		go func() {
-			dynatrace.IngestReportAsEventsV2(apiBaseUrl, token, report)
-			wg.Done()
-		}()
-		go func() {
-			dynatrace.IngestReportAsLogs(apiBaseUrl, token, report)
-			wg.Done()
-		}()
+		// case "metrics":
+		// 	wg.Add(1)
+		// 	go func() {
+		// 		dynatrace.IngestReportAsMetrics(apiBaseUrl, token, report)
+		// 		wg.Done()
+		// 	}()
 
-		wg.Wait()
-	case "events":
-		dynatrace.IngestReportAsEventsV2(apiBaseUrl, token, report)
-	case "logs":
-		dynatrace.IngestReportAsLogs(apiBaseUrl, token, report)
-	default:
-		sugar.Warnf("Invalid argument '%s' for --ingest-as, fallback is 'logs'")
-		dynatrace.IngestReportAsLogs(apiBaseUrl, token, report)
+		default:
+			sugar.Warnf("Invalid option '%s' for --ingest; valid values are logs and/or metrics separated by comma")
+		}
 	}
+	wg.Wait()
 
 	sugar.Debug("Finished report processing")
 }
@@ -79,11 +89,13 @@ func report(w http.ResponseWriter, r *http.Request) {
 
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
+		sugar.Error(err.Error())
+
 		if !noExit {
-			sugar.Fatal(err.Error())
+			StopServer()
 		}
 
-		sugar.Error(err.Error())
+		return
 	}
 
 	go processReport(body, noExit)

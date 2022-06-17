@@ -13,62 +13,46 @@ import (
 )
 
 type Log struct {
-	Content  string `json:"content"`
-	Source   string `json:"log.source"`
-	Severity string `json:"severity"`
-	// TODO use dt.* and kubehunter.*
-	KubeHunterFields map[string]string `json:"kube-hunter"`
+	Content         string `json:"content"`
+	Source          string `json:"log.source"`
+	LogLevel        string `json:"severity"`
+	Cluster         string `json:"dt.entity.kubernetes_cluster,omitempty"`
+	AvdReference    string `json:"kube-hunter.avd_reference,omitempty"`
+	Category        string `json:"kube-hunter.mitre_category,omitempty"`
+	Description     string `json:"kube-hunter.description,omitempty"`
+	Evidence        string `json:"kube-hunter.evidence,omitempty"`
+	HunterType      string `json:"kube-hunter.hunter_type,omitempty"`
+	Location        string `json:"kube-hunter.location,omitempty"`
+	Severity        string `json:"kube-hunter.severity,omitempty"`
+	Vulnerability   string `json:"kube-hunter.vulnerability,omitempty"`
+	VulnerabilityId string `json:"kube-hunter.vulnerability_id,omitempty"`
 }
 
 func createLogsFromKubeHunterReport(report *kubehunter.Report) []*Log {
 	logs := make([]*Log, 0, 20)
 
-	// for _, n := range report.Nodes {
-	// 	props := make(map[string]string)
-
-	// 	props["Location"] = n.Location
-	// 	props["Type"] = n.Type
-
-	// 	logs = append(logs, &Log{
-	// 		Severity:         "info",
-	// 		Source:           "kube-hunter",
-	// 		Content:          "TBD",
-	// 		KubeHunterFields: props,
-	// 	})
-	// }
-
-	// for _, s := range report.Services {
-	// 	props := make(map[string]string)
-
-	// 	props["Location"] = s.Location
-	// 	props["Service"] = s.Service
-
-	// 	logs = append(logs, &Log{
-	// 		Severity:         "info",
-	// 		Source:           "kube-hunter",
-	// 		Content:          "TBD",
-	// 		KubeHunterFields: props,
-	// 	})
-	// }
-
 	for _, v := range report.Vulnerabilities {
-		props := make(map[string]string)
-
-		props["avdReference"] = v.AvdReference
-		props["category"] = v.Category
-		props["description"] = v.Description
-		props["evidence"] = v.Evidence
-		props["kubeHunterType"] = v.Hunter
-		props["location"] = v.Location
-		props["severity"] = v.Severity
-		props["vulnerabilityId"] = v.Vid
-		props["vulnerability"] = v.Vulnerability
+		var content string
+		if prefix := viper.GetString("prefix"); prefix != "" {
+			content = fmt.Sprintf("%s %s: %s", prefix, v.Vulnerability, v.Description)
+		} else {
+			content = fmt.Sprintf("%s: %s", v.Vulnerability, v.Description)
+		}
 
 		logs = append(logs, &Log{
-			Severity:         "info",
-			Source:           "kube-hunter",
-			Content:          fmt.Sprintf("%s %s: %s", viper.GetString("prefix"), v.Vulnerability, v.Description),
-			KubeHunterFields: props,
+			Content:         content,
+			Source:          "kube-hunter",
+			LogLevel:        "info",
+			Cluster:         viper.GetString("cluster-name"),
+			AvdReference:    v.AvdReference,
+			Category:        v.Category,
+			Description:     v.Description,
+			Evidence:        v.Evidence,
+			HunterType:      v.Hunter,
+			Location:        v.Location,
+			Severity:        v.Severity,
+			Vulnerability:   v.Vulnerability,
+			VulnerabilityId: v.Vid,
 		})
 	}
 
