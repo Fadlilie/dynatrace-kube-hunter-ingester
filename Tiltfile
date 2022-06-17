@@ -16,8 +16,16 @@ local_resource(
 )
 
 local_resource(
-  'post-report',
+  'post-sample-report',
   'curl --data "$(cat dev/sample-report.txt)" http://localhost:8080/report',
+  auto_init = False,
+  trigger_mode=TRIGGER_MODE_MANUAL,
+)
+
+k8s_yaml('dev/kube-hunter.yaml')
+k8s_resource(
+  workload='kube-hunter',
+  auto_init = False,
   trigger_mode=TRIGGER_MODE_MANUAL,
 )
 
@@ -37,7 +45,7 @@ docker_build_with_restart(
 context = os.getenv('TILT_K8S_CONTEXT')
 allow_k8s_contexts(context)
 
-k8s_yaml('dev/kubernetes.yaml')
+k8s_yaml('dev/dynatrace-kube-hunter-ingester.yaml')
 k8s_resource(
   workload='dynatrace-kube-hunter-ingester', 
   port_forwards=8080,

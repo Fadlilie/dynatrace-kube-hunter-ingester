@@ -1,0 +1,42 @@
+# ---
+# apiVersion: batch/v1
+# kind: Job
+# metadata:
+#   name: kube-hunter
+# spec:
+#   ttlSecondsAfterFinished: 300
+#   template:
+#     metadata:
+#       labels:
+#         app: kube-hunter
+#     spec:
+#       containers:
+#         - name: kube-hunter
+#           image: aquasec/kube-hunter:0.6.8
+#           command:
+#             - kube-hunter
+#           args:
+#             - --pod
+#             - --quick # recommended for AWS and Azure
+#             - --report=json
+#       restartPolicy: Never
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: kube-hunter
+  name: kube-hunter
+spec:
+  containers:
+    - name: kube-hunter
+      image: aquasec/kube-hunter:0.6.8
+      command:
+        - kube-hunter
+      args:
+        - --pod
+        - --quick # recommended for AWS and Azure
+        - --report=json
+      resources: {}
+  restartPolicy: Never
