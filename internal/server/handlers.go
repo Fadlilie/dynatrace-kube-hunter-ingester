@@ -66,12 +66,14 @@ func processReport(body []byte, noExit bool) {
 				wg.Done()
 			}()
 
-		// case "metrics":
-		// 	wg.Add(1)
-		// 	go func() {
-		// 		dynatrace.IngestReportAsMetrics(apiBaseUrl, token, report)
-		// 		wg.Done()
-		// 	}()
+		case "metrics":
+			sugar.Warn("Ingest option 'metrics' is still under development")
+
+			// wg.Add(1)
+			// go func() {
+			// 	dynatrace.IngestReportAsMetrics(apiBaseUrl, token, report)
+			// 	wg.Done()
+			// }()
 
 		default:
 			sugar.Warnf("Invalid option '%s' for --ingest; valid values are logs and/or metrics separated by comma")
