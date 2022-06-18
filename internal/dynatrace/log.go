@@ -17,6 +17,7 @@ type Log struct {
 	Source          string `json:"log.source"`
 	LogLevel        string `json:"severity"`
 	Cluster         string `json:"dt.entity.kubernetes_cluster,omitempty"`
+	ClusterName     string `json:"dt.kubernetes.cluster.name,omitempty"`
 	AvdReference    string `json:"kube-hunter.avd_reference,omitempty"`
 	Category        string `json:"kube-hunter.mitre_category,omitempty"`
 	Description     string `json:"kube-hunter.description,omitempty"`
@@ -44,6 +45,7 @@ func createLogsFromKubeHunterReport(report *kubehunter.Report) []*Log {
 			Source:          "kube-hunter",
 			LogLevel:        "info",
 			Cluster:         viper.GetString("cluster-name"),
+			ClusterName:     viper.GetString("cluster-name"),
 			AvdReference:    v.AvdReference,
 			Category:        v.Category,
 			Description:     v.Description,
