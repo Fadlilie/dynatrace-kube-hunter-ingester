@@ -13,6 +13,9 @@ builds:
       - darwin
     flags:
       - -v
+    ldflags:
+    - -X github.com/martinnirtl/dynatrace-kube-hunter-ingester/cmd/cmd.version={{ .Version }}
+    - -X github.com/martinnirtl/dynatrace-kube-hunter-ingester/cmd/cmd.commit={{ .Commit }}
 archives:
   - replacements:
       darwin: Darwin

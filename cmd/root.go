@@ -22,6 +22,7 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -30,10 +31,16 @@ import (
 	"go.uber.org/zap"
 )
 
+var (
+	version = "development"
+	commit  = "na"
+)
+
 var rootCmd = &cobra.Command{
-	Use:   "dynatrace-kube-hunter-ingester",
-	Short: "Send kube-hunter reports to Dynatrace",
-	Long:  `Send kube-hunter reports to Dynatrace. For more information visit https://github.com/martinnirtl/dynatrace-kube-hunter-ingester.`,
+	Use:     "dynatrace-kube-hunter-ingester",
+	Version: fmt.Sprintf("%s (commit %s)", version, commit),
+	Short:   "Send kube-hunter reports to Dynatrace",
+	Long:    `Send kube-hunter reports to Dynatrace. For more information visit https://github.com/martinnirtl/dynatrace-kube-hunter-ingester.`,
 	// Run: func(cmd *cobra.Command, args []string) {},
 }
 
@@ -62,6 +69,8 @@ func initLogger() {
 
 func init() {
 	cobra.OnInitialize(initLogger)
+
+	rootCmd.SetVersionTemplate("Version: {{ .Version }}\n")
 
 	rootCmd.PersistentFlags().Bool("dev-mode", false, "Enable development mode")
 	rootCmd.PersistentFlags().MarkHidden("dev-mode")
