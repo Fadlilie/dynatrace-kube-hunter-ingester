@@ -46,3 +46,14 @@ jobs:
           args: release --rm-dist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - 
+        name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: martinnirtl/dynatrace-kube-hunter-ingester:latest
+          format: table
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+      -
+        name: Push images
+        run: docker push --all-tags martinnirtl/dynatrace-kube-hunter-ingester
