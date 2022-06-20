@@ -13,19 +13,20 @@ import (
 )
 
 type Log struct {
-	Content         string `json:"content"`
-	Source          string `json:"log.source"`
-	LogLevel        string `json:"severity"`
-	ClusterName     string `json:"dt.kubernetes.cluster.name,omitempty"`
-	AvdReference    string `json:"kube-hunter.avd_reference,omitempty"`
-	Category        string `json:"kube-hunter.mitre_category,omitempty"`
-	Description     string `json:"kube-hunter.description,omitempty"`
-	Evidence        string `json:"kube-hunter.evidence,omitempty"`
-	HunterType      string `json:"kube-hunter.hunter_type,omitempty"`
-	Location        string `json:"kube-hunter.location,omitempty"`
-	Severity        string `json:"kube-hunter.severity,omitempty"`
-	Vulnerability   string `json:"kube-hunter.vulnerability,omitempty"`
-	VulnerabilityId string `json:"kube-hunter.vulnerability_id,omitempty"`
+	Content              string `json:"content"`
+	Source               string `json:"log.source"`
+	LogLevel             string `json:"severity"`
+	ClusterNameK8s       string `json:"k8s.cluster.name,omitempty"`
+	ClusterNameDynatrace string `json:"dt.kubernetes.cluster.name,omitempty"`
+	AvdReference         string `json:"kube-hunter.avd_reference,omitempty"`
+	Category             string `json:"kube-hunter.mitre_category,omitempty"`
+	Description          string `json:"kube-hunter.description,omitempty"`
+	Evidence             string `json:"kube-hunter.evidence,omitempty"`
+	HunterType           string `json:"kube-hunter.hunter_type,omitempty"`
+	Location             string `json:"kube-hunter.location,omitempty"`
+	Severity             string `json:"kube-hunter.severity,omitempty"`
+	Vulnerability        string `json:"kube-hunter.vulnerability,omitempty"`
+	VulnerabilityId      string `json:"kube-hunter.vulnerability_id,omitempty"`
 }
 
 func createLogsFromKubeHunterReport(report *kubehunter.Report) []*Log {
@@ -40,19 +41,20 @@ func createLogsFromKubeHunterReport(report *kubehunter.Report) []*Log {
 		}
 
 		logs = append(logs, &Log{
-			Content:         content,
-			Source:          "kube-hunter",
-			LogLevel:        "info",
-			ClusterName:     viper.GetString("cluster-name"),
-			AvdReference:    v.AvdReference,
-			Category:        v.Category,
-			Description:     v.Description,
-			Evidence:        v.Evidence,
-			HunterType:      v.Hunter,
-			Location:        v.Location,
-			Severity:        v.Severity,
-			Vulnerability:   v.Vulnerability,
-			VulnerabilityId: v.Vid,
+			Content:              content,
+			Source:               "kube-hunter",
+			LogLevel:             "info",
+			ClusterNameK8s:       viper.GetString("cluster-name"),
+			ClusterNameDynatrace: viper.GetString("cluster-name"),
+			AvdReference:         v.AvdReference,
+			Category:             v.Category,
+			Description:          v.Description,
+			Evidence:             v.Evidence,
+			HunterType:           v.Hunter,
+			Location:             v.Location,
+			Severity:             v.Severity,
+			Vulnerability:        v.Vulnerability,
+			VulnerabilityId:      v.Vid,
 		})
 	}
 
