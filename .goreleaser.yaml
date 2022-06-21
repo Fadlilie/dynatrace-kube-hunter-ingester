@@ -1,7 +1,9 @@
 project_name: dynatrace-kube-hunter-ingester
+
 before:
   hooks:
     - go mod tidy
+
 builds:
   - id: app
     binary: app
@@ -26,22 +28,25 @@ archives:
       windows: Windows
       386: i386
       amd64: x86_64
+
 checksum:
   name_template: checksums.txt
+
 snapshot:
   name_template: "{{ incpatch .Version }}-next"
+
 dockers:
   - id: app
-    goos: linux
     image_templates:
       - "martinnirtl/dynatrace-kube-hunter-ingester:latest"
       - "martinnirtl/dynatrace-kube-hunter-ingester:{{ .Major }}"
       - "martinnirtl/dynatrace-kube-hunter-ingester:{{ .Major }}.{{ .Minor }}"
       - "martinnirtl/dynatrace-kube-hunter-ingester:{{ .Version }}"
     use: buildx
-    # build_flag_templates:
-    #   - --platform=linux/amd64,linux/arm64
-    skip_push: "true"
+    build_flag_templates:
+      - --platform=linux/amd64,linux/arm64
+    # skip_push: "true"
+
 changelog:
   sort: asc
   filters:
