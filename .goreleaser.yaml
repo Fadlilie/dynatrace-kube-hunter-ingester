@@ -14,8 +14,11 @@ builds:
     flags:
       - -v
     ldflags:
-    - -X github.com/martinnirtl/dynatrace-kube-hunter-ingester/cmd/cmd.version={{ .Version }}
-    - -X github.com/martinnirtl/dynatrace-kube-hunter-ingester/cmd/cmd.commit={{ .Commit }}
+    - -X cmd.version={{ .Version }}
+    - -X cmd.commit={{ .Commit }}
+    - -X cmd.date={{ .CommitDate }} 
+    - -X main.builtBy=goreleaser
+
 archives:
   - replacements:
       darwin: Darwin

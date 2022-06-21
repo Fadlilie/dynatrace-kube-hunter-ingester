@@ -34,11 +34,13 @@ import (
 var (
 	version = "development"
 	commit  = "na"
+	date    = "-"
+	builtBy = "go build"
 )
 
 var rootCmd = &cobra.Command{
 	Use:     "dynatrace-kube-hunter-ingester",
-	Version: fmt.Sprintf("%s (commit %s)", version, commit),
+	Version: fmt.Sprintf("%s (commit %s, date: %s) built by %s", version, commit, date, builtBy),
 	Short:   "Send kube-hunter reports to Dynatrace",
 	Long:    `Send kube-hunter reports to Dynatrace. For more information visit https://github.com/martinnirtl/dynatrace-kube-hunter-ingester.`,
 	// Run: func(cmd *cobra.Command, args []string) {},
