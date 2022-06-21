@@ -16,10 +16,10 @@ builds:
     flags:
       - -v
     ldflags:
-    - -X cmd.version={{ .Version }}
-    - -X cmd.commit={{ .Commit }}
-    - -X cmd.date={{ .CommitDate }} 
-    - -X main.builtBy=goreleaser
+    - -X cmd/cmd.version={{ .Version }}
+    - -X cmd/cmd.commit={{ .Commit }}
+    - -X cmd/cmd.date={{ .CommitDate }} 
+    - -X cmd/cmd.builtBy=goreleaser
 
 archives:
   - replacements:
@@ -52,22 +52,22 @@ dockers:
     goarch: arm64
 
 docker_manifests:
-- name_template: 'martinnirtl/dynatrace-kube-hunter-ingester:{{ .Version }}'
+- name_template: "martinnirtl/dynatrace-kube-hunter-ingester:{{ .Version }}"
   image_templates:
-  - 'martinnirtl/dynatrace-kube-hunter-ingester:{{ .Version }}-amd64'
-  - 'martinnirtl/dynatrace-kube-hunter-ingester:{{ .Version }}-arm64'
-- name_template: 'martinnirtl/dynatrace-kube-hunter-ingester:{{ .Major }}{{ .Minor }}'
+  - "martinnirtl/dynatrace-kube-hunter-ingester:{{ .Version }}-amd64"
+  - "martinnirtl/dynatrace-kube-hunter-ingester:{{ .Version }}-arm64"
+- name_template: "martinnirtl/dynatrace-kube-hunter-ingester:{{ .Major }}.{{ .Minor }}"
   image_templates:
-  - 'martinnirtl/dynatrace-kube-hunter-ingester:{{ .Version }}-amd64'
-  - 'martinnirtl/dynatrace-kube-hunter-ingester:{{ .Version }}-arm64'
-- name_template: 'martinnirtl/dynatrace-kube-hunter-ingester:{{ .Major }}'
+  - "martinnirtl/dynatrace-kube-hunter-ingester:{{ .Version }}-amd64"
+  - "martinnirtl/dynatrace-kube-hunter-ingester:{{ .Version }}-arm64"
+- name_template: "martinnirtl/dynatrace-kube-hunter-ingester:{{ .Major }}"
   image_templates:
-  - 'martinnirtl/dynatrace-kube-hunter-ingester:{{ .Version }}-amd64'
-  - 'martinnirtl/dynatrace-kube-hunter-ingester:{{ .Version }}-arm64'
-- name_template: 'martinnirtl/dynatrace-kube-hunter-ingester:latest'
+  - "martinnirtl/dynatrace-kube-hunter-ingester:{{ .Version }}-amd64"
+  - "martinnirtl/dynatrace-kube-hunter-ingester:{{ .Version }}-arm64"
+- name_template: "martinnirtl/dynatrace-kube-hunter-ingester:latest"
   image_templates:
-  - 'martinnirtl/dynatrace-kube-hunter-ingester:{{ .Version }}-amd64'
-  - 'martinnirtl/dynatrace-kube-hunter-ingester:{{ .Version }}-arm64'
+  - "martinnirtl/dynatrace-kube-hunter-ingester:{{ .Version }}-amd64"
+  - "martinnirtl/dynatrace-kube-hunter-ingester:{{ .Version }}-arm64"
 
 changelog:
   sort: asc
