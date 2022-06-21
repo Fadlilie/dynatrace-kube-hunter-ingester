@@ -36,16 +36,38 @@ snapshot:
   name_template: "{{ incpatch .Version }}-next"
 
 dockers:
-  - id: app
-    image_templates:
-      - "martinnirtl/dynatrace-kube-hunter-ingester:latest"
-      - "martinnirtl/dynatrace-kube-hunter-ingester:{{ .Major }}"
-      - "martinnirtl/dynatrace-kube-hunter-ingester:{{ .Major }}.{{ .Minor }}"
-      - "martinnirtl/dynatrace-kube-hunter-ingester:{{ .Version }}"
+  - image_templates:
+      - "martinnirtl/dynatrace-kube-hunter-ingester:{{ .Version }}-amd64"
+    dockerfile: Dockerfile
     use: buildx
     build_flag_templates:
-      - --platform=linux/amd64,linux/arm64
-    # skip_push: "true"
+      - --platform=linux/amd64
+    goarch: amd64
+  - image_templates:
+      - "martinnirtl/dynatrace-kube-hunter-ingester:{{ .Version }}-arm64"
+    dockerfile: Dockerfile
+    use: buildx
+    build_flag_templates:
+      - --platform=linux/arm64
+    goarch: arm64
+
+docker_manifests:
+- name_template: 'martinnirtl/dynatrace-kube-hunter-ingester:{{ .Version }}'
+  image_templates:
+  - 'martinnirtl/dynatrace-kube-hunter-ingester:{{ .Version }}-amd64'
+  - 'martinnirtl/dynatrace-kube-hunter-ingester:{{ .Version }}-arm64'
+- name_template: 'martinnirtl/dynatrace-kube-hunter-ingester:{{ .Major }}{{ .Minor }}'
+  image_templates:
+  - 'martinnirtl/dynatrace-kube-hunter-ingester:{{ .Version }}-amd64'
+  - 'martinnirtl/dynatrace-kube-hunter-ingester:{{ .Version }}-arm64'
+- name_template: 'martinnirtl/dynatrace-kube-hunter-ingester:{{ .Major }}'
+  image_templates:
+  - 'martinnirtl/dynatrace-kube-hunter-ingester:{{ .Version }}-amd64'
+  - 'martinnirtl/dynatrace-kube-hunter-ingester:{{ .Version }}-arm64'
+- name_template: 'martinnirtl/dynatrace-kube-hunter-ingester:latest'
+  image_templates:
+  - 'martinnirtl/dynatrace-kube-hunter-ingester:{{ .Version }}-amd64'
+  - 'martinnirtl/dynatrace-kube-hunter-ingester:{{ .Version }}-arm64'
 
 changelog:
   sort: asc
