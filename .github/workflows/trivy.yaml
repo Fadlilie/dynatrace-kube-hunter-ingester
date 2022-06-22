@@ -7,9 +7,8 @@ name: trivy
 
 on:
   release:
-    types: [ published ]
-  # registry_package:
-  #   types: [ published ]
+    types:
+      - released
 
 permissions:
   contents: read
