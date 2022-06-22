@@ -59,6 +59,7 @@ jobs:
 
   trivy:
     uses: ./.github/workflows/trivy.yaml
+    needs: goreleaser
     permissions:
       contents: read
       security-events: write
