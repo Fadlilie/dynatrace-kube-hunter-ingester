@@ -56,4 +56,4 @@ jobs:
       # - name: Push images
       #   run: docker push --all-tags martinnirtl/dynatrace-kube-hunter-ingester
   trivy:
-    uses: ./github/workflows/trivy.yaml
+    uses: ./.github/workflows/trivy.yaml
