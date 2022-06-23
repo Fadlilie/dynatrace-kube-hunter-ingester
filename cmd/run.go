@@ -33,6 +33,10 @@ var runCmd = &cobra.Command{
 	Short: "Ingest logs generated from kube-hunter reports into Dynatrace",
 	Long: `Ingest logs generated from a kube-hunter report into Dynatrace. 
 The command will run a server to receive the report over HTTP. When the report is received, it will be parsed to logs which get ingested via the Dynatrace Log Ingest API.`,
+	PreRun: func(cmd *cobra.Command, args []string) {
+		// TODO check if this approach is a recommended/best practise
+		viper.BindPFlags(cmd.Flags())
+	},
 	Run: func(cmd *cobra.Command, args []string) {
 		server.StartServer()
 	},
@@ -46,9 +50,7 @@ func init() {
 	runCmd.Flags().String("api-url", "", "Dynatrace API URL e.g. https://xxxxxxxx.live.dynatrace.com/api")
 	runCmd.Flags().String("token", "", "Dynatrace API token with 'Ingest logs' and optionally 'Ingest metrics' permissions assigned")
 	runCmd.Flags().String("cluster-name", "", "Set cluster name (same as in Dynatrace)")
-	runCmd.Flags().String("prefix", "[kube-hunter]", "Prefix for ingested logs (default: [kube-hunter])")
+	// runCmd.Flags().String("prefix", "[kube-hunter]", "Prefix for ingested logs (default: [kube-hunter])")
 	runCmd.Flags().String("ingest", "logs", "Ingest report as logs and/or metrics (default: logs)")
 	runCmd.Flags().Bool("dry-run", false, "Run a dry-run and get events/logs printed only")
-
-	viper.BindPFlags(runCmd.Flags())
 }
