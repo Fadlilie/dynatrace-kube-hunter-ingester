@@ -93,9 +93,7 @@ func IngestReportAsEventsV2(apiBaseUrl string, token string, report *kubehunter.
 			return
 		}
 
-		sugar.Infow("Dry run output for events",
-			"", string(json),
-		)
+		sugar.Infof("Dry run output for events:\n  %s", string(json))
 
 		return
 	}

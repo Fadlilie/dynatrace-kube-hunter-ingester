@@ -98,9 +98,7 @@ func IngestReportAsLogs(apiBaseUrl string, token string, report *kubehunter.Repo
 			return
 		}
 
-		sugar.Infow("Dry run output for logs",
-			"logs", string(json),
-		)
+		sugar.Infof("Dry run output for logs:\n  %s", string(json))
 
 		return
 	}
