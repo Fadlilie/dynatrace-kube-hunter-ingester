@@ -52,4 +52,6 @@ func init() {
 	configureCmd.Flags().Bool("skip-log-events", false, "Skip creation of log event and log custom attribute configuration")
 	configureCmd.Flags().Bool("skip-metrics", false, "Skip creation of metrics metadata configuration")
 	configureCmd.Flags().Bool("skip-alerting-profile", false, "Skip creation of alerting profile configuration")
+
+	configureCmd.MarkFlagsRequiredTogether("api-url", "token")
 }

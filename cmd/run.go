@@ -53,4 +53,6 @@ func init() {
 	// runCmd.Flags().String("prefix", "[kube-hunter]", "Prefix for ingested logs (default: [kube-hunter])")
 	runCmd.Flags().String("ingest", "logs", "Ingest report as logs and/or metrics (default: logs)")
 	runCmd.Flags().Bool("dry-run", false, "Run a dry-run and get events/logs printed only")
+
+	runCmd.MarkFlagsRequiredTogether("api-url", "token")
 }
