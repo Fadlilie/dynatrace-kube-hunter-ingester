@@ -191,15 +191,54 @@ func appendLogEventConfig(settings *[]interface{}) {
 				Summary: summary,
 				Query:   fmt.Sprintf("log.source=\"kube-hunter\" AND kube-hunter.severity=\"%s\"", s),
 				EventTemplate: LogEventConfigEventTemplate{
-					Title: summary,
-					// TODO write description
-					Description: "kube-hunter Report\n\nTBD",
+					Title:       summary + " in cluster {k8s.cluster.name}",
+					Description: "{kube-hunter.vulnerability}:\n{kube-hunter.description}\n\nSee properties for further details and links",
 					EventType:   eventType,
 					DavisMerge:  true,
 					Metadata: []LogEventConfigMetadata{
 						{
 							MetadataKey:   "dt.kubernetes.cluster.name",
 							MetadataValue: "{dt.kubernetes.cluster.name}",
+						},
+						{
+							MetadataKey:   "k8s.cluster.name",
+							MetadataValue: "{k8s.cluster.name}",
+						},
+						{
+							MetadataKey:   "kube-hunter.avd_reference",
+							MetadataValue: "{kube-hunter.avd_reference}",
+						},
+						{
+							MetadataKey:   "kube-hunter.mitre_category",
+							MetadataValue: "{kube-hunter.mitre_category}",
+						},
+						{
+							MetadataKey:   "kube-hunter.description",
+							MetadataValue: "{kube-hunter.description}",
+						},
+						{
+							MetadataKey:   "kube-hunter.evidence",
+							MetadataValue: "{kube-hunter.evidence}",
+						},
+						{
+							MetadataKey:   "kube-hunter.hunter_type",
+							MetadataValue: "{kube-hunter.hunter_type}",
+						},
+						{
+							MetadataKey:   "kube-hunter.location",
+							MetadataValue: "{kube-hunter.location}",
+						},
+						{
+							MetadataKey:   "kube-hunter.severity",
+							MetadataValue: "{kube-hunter.severity}",
+						},
+						{
+							MetadataKey:   "kube-hunter.vulnerability",
+							MetadataValue: "{kube-hunter.vulnerability}",
+						},
+						{
+							MetadataKey:   "kube-hunter.vulnerability_id",
+							MetadataValue: "{kube-hunter.vulnerability_id}",
 						},
 					},
 				},
