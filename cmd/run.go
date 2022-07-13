@@ -34,7 +34,6 @@ var runCmd = &cobra.Command{
 	Long: `Ingest logs generated from a kube-hunter report into Dynatrace. 
 The command will run a server to receive the report over HTTP. When the report is received, it will be parsed to logs which get ingested via the Dynatrace Log Ingest API.`,
 	PreRun: func(cmd *cobra.Command, args []string) {
-		// TODO check if this approach is a recommended/best practise
 		viper.BindPFlags(cmd.Flags())
 	},
 	Run: func(cmd *cobra.Command, args []string) {

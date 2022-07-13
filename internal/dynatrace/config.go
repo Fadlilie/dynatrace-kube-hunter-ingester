@@ -194,7 +194,7 @@ func appendLogEventConfig(settings *[]interface{}) {
 					Title:       summary,
 					Description: "{kube-hunter.vulnerability}:\n{kube-hunter.description}\n\nSee properties for further details and links",
 					EventType:   eventType,
-					DavisMerge:  true,
+					// TODO prevent event from timing out
 					Metadata: []LogEventConfigMetadata{
 						{
 							MetadataKey:   "dt.kubernetes.cluster.id",
@@ -246,6 +246,8 @@ func appendLogEventConfig(settings *[]interface{}) {
 }
 
 func appendAlertingProfileConfig(settings *[]interface{}) {
+	// TODO check for existing alerting profile
+
 	alertingProfileConfig := AlertingProfileConfig{
 		Summary:  "[kube-hunter] Report alerts",
 		Scope:    "environment",
@@ -399,7 +401,6 @@ func applyConfig(url string, token string, settings *[]interface{}) {
 	}
 
 	if res.StatusCode >= 400 {
-		// TODO add error message
 		sugar.Info("Failed to apply configuration: ", res.Status)
 	}
 
