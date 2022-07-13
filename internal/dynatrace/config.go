@@ -194,6 +194,7 @@ func appendLogEventConfig(settings *[]interface{}) {
 					Title:       summary,
 					Description: "{kube-hunter.vulnerability}:\n{kube-hunter.description}\n\nSee properties for further details and links",
 					EventType:   eventType,
+					DavisMerge:  false,
 					// TODO prevent event from timing out
 					Metadata: []LogEventConfigMetadata{
 						{
