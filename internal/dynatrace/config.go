@@ -191,18 +191,14 @@ func appendLogEventConfig(settings *[]interface{}) {
 				Summary: summary,
 				Query:   fmt.Sprintf("log.source=\"kube-hunter\" AND kube-hunter.severity=\"%s\"", s),
 				EventTemplate: LogEventConfigEventTemplate{
-					Title:       summary + " in cluster {k8s.cluster.name}",
+					Title:       summary,
 					Description: "{kube-hunter.vulnerability}:\n{kube-hunter.description}\n\nSee properties for further details and links",
 					EventType:   eventType,
 					DavisMerge:  true,
 					Metadata: []LogEventConfigMetadata{
 						{
-							MetadataKey:   "dt.kubernetes.cluster.name",
-							MetadataValue: "{dt.kubernetes.cluster.name}",
-						},
-						{
-							MetadataKey:   "k8s.cluster.name",
-							MetadataValue: "{k8s.cluster.name}",
+							MetadataKey:   "dt.kubernetes.cluster.id",
+							MetadataValue: "{dt.kubernetes.cluster.id}",
 						},
 						{
 							MetadataKey:   "kube-hunter.avd_reference",
